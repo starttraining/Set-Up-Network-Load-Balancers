@@ -1,0 +1,64 @@
+For this load balancing scenario, you create three Compute Engine VM instances and install Apache on them, then add a firewall rule that allows HTTP traffic to reach the instances.
+
+The code provided sets the zone to Zone. Setting the tags field lets you reference these instances all at once, such as with a firewall rule. These commands also install Apache on each instance and give each instance a unique home page.
+
+Create a virtual machine, www1, in your default zone using the following code:
+
+  gcloud compute instances create www1 \
+    --zone=Zone \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
+      apt-get update
+      apt-get install apache2 -y
+      service apache2 restart
+      echo "
+<h3>Web Server: www1</h3>" | tee /var/www/html/index.html'
+
+Create a virtual machine, www2, in your default zone using the following code:
+
+  gcloud compute instances create www2 \
+    --zone=Zone \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
+      apt-get update
+      apt-get install apache2 -y
+      service apache2 restart
+      echo "
+<h3>Web Server: www2</h3>" | tee /var/www/html/index.html'
+
+Create a virtual machine, www3, in your default zone.
+
+  gcloud compute instances create www3 \
+    --zone=Zone  \
+    --tags=network-lb-tag \
+    --machine-type=e2-small \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --metadata=startup-script='#!/bin/bash
+      apt-get update
+      apt-get install apache2 -y
+      service apache2 restart
+      echo "
+<h3>Web Server: www3</h3>" | tee /var/www/html/index.html'
+
+Create a firewall rule to allow external traffic to the VM instances:
+
+gcloud compute firewall-rules create www-firewall-network-lb \
+    --target-tags network-lb-tag --allow tcp:80
+
+Now you need to get the external IP addresses of your instances and verify that they are running.
+
+Run the following to list your instances. You'll see their IP addresses in the EXTERNAL_IP column:
+
+gcloud compute instances list
+
+Verify that each instance is running with curl, replacing [IP_ADDRESS] with the external IP address for each of your VMs:
+
+curl http://[IP_ADDRESS]
+

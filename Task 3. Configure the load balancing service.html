@@ -1,0 +1,14 @@
+When you configure the load balancing service, your virtual machine instances receives packets that are destined for the static external IP address you configure. Instances made with a Compute Engine image are automatically configured to handle this IP address.
+
+Note: Learn more about how to set up Network Load Balancing from the Backend service-based external passthrough Network Load Balancer overview guide.
+Create a static external IP address for your load balancer:
+
+gcloud compute addresses create network-lb-ip-1 \
+  --region Region
+
+Output:
+
+   Created [https://www.googleapis.com/compute/v1/projects/qwiklabs-gcp-03-xxxxxxxxxxx/regions//addresses/network-lb-ip-1].
+Add a legacy HTTP health check resource:
+
+gcloud compute http-health-checks create basic-check

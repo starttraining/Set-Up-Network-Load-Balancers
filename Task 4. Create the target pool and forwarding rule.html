@@ -1,0 +1,21 @@
+A target pool is a group of backend instances that receive incoming traffic from external passthrough NLBs. All backend instances of a target pool must reside in the same Google Cloud region.
+
+Run the following to create the target pool and use the health check, which is required for the service to function:
+
+gcloud compute target-pools create www-pool \
+  --region Region --http-health-check basic-check
+
+Add the instances you created earlier to the pool:
+
+gcloud compute target-pools add-instances www-pool \
+    --instances www1,www2,www3
+
+Next you'll make the forwarding rule. A forwarding rule specifies how to route network traffic to the backend services of a load balancer.
+
+Add a forwarding rule:
+
+gcloud compute forwarding-rules create www-rule \
+    --region  Region \
+    --ports 80 \
+    --address network-lb-ip-1 \
+    --target-pool www-pool
